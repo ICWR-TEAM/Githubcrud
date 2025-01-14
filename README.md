@@ -17,8 +17,6 @@ Here's an example of how to use the library:
 ```php
 require 'vendor/autoload.php';
 
-use IcwrTeam\Githubcrud;
-
 $config = [
     'token' => 'YOUR_GITHUB_TOKEN',
     'username' => 'YOUR_GITHUB_USERNAME',
@@ -51,4 +49,3 @@ $github->deleteFile('example.txt');
 ## License
 
 This library is open-sourced software licensed under the [MIT license](LICENSE).
-

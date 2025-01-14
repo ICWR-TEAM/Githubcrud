@@ -11,11 +11,11 @@ class Githubcrud
         $this->gitConfig = $gitConfig;
     }
 
-    private function makeCurlRequest(string $url, string $method, array $data = [], bool $decodeResponse = true)
+    private function makeCurlRequest(string $url, string $method, array $data = [], bool $decodeResponse = true): mixed
     {
-        $ch = curl_init($url);
+        $ch = curl_init(url: $url);
 
-        curl_setopt_array($ch, [
+        curl_setopt_array(handle: $ch, options: [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_CUSTOMREQUEST => $method,
             CURLOPT_HTTPHEADER => [
@@ -26,18 +26,18 @@ class Githubcrud
         ]);
 
         if (!empty($data)) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+            curl_setopt(handle: $ch, option: CURLOPT_POSTFIELDS, value: json_encode(value: $data));
         }
 
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        $response = curl_exec(handle: $ch);
+        $httpCode = curl_getinfo(handle: $ch, option: CURLINFO_HTTP_CODE);
+        curl_close(handle: $ch);
 
         if ($httpCode >= 200 && $httpCode < 300) {
-            return $decodeResponse ? json_decode($response, true) : $response;
+            return $decodeResponse ? json_decode(json: $response, associative: true) : $response;
         }
 
-        throw new \Exception("GitHub API Request failed. HTTP Code: $httpCode. Response: $response");
+        throw new \Exception(message: "GitHub API Request failed. HTTP Code: $httpCode. Response: $response");
     }
 
     public function createFile(string $fileName, string $fileContent): bool
@@ -46,11 +46,11 @@ class Githubcrud
 
         $data = [
             'message' => "Create file $fileName",
-            'content' => base64_encode($fileContent),
+            'content' => base64_encode(string: $fileContent),
             'branch' => $this->gitConfig['branch'],
         ];
 
-        $this->makeCurlRequest($url, 'PUT', $data);
+        $this->makeCurlRequest(url: $url, method: 'PUT', data: $data);
         return true;
     }
 
@@ -59,17 +59,17 @@ class Githubcrud
         $url = "https://api.github.com/repos/{$this->gitConfig['username']}/{$this->gitConfig['repository']}/contents/$fileName";
 
         // Get file info to retrieve the SHA
-        $fileInfo = $this->makeCurlRequest($url, 'GET');
+        $fileInfo = $this->makeCurlRequest(url: $url, method: 'GET');
         $fileSha = $fileInfo['sha'];
 
         $data = [
             'message' => "Edit file $fileName",
-            'content' => base64_encode($fileContent),
+            'content' => base64_encode(string: $fileContent),
             'sha' => $fileSha,
             'branch' => $this->gitConfig['branch'],
         ];
 
-        $this->makeCurlRequest($url, 'PUT', $data);
+        $this->makeCurlRequest(url: $url, method: 'PUT', data: $data);
         return true;
     }
 
@@ -77,8 +77,8 @@ class Githubcrud
     {
         $url = "https://api.github.com/repos/{$this->gitConfig['username']}/{$this->gitConfig['repository']}/contents/$fileName?ref={$this->gitConfig['branch']}";
 
-        $fileInfo = $this->makeCurlRequest($url, 'GET');
-        return base64_decode($fileInfo['content']);
+        $fileInfo = $this->makeCurlRequest(url: $url, method: 'GET');
+        return base64_decode(string: $fileInfo['content']);
     }
 
     public function deleteFile(string $fileName): bool
@@ -86,7 +86,7 @@ class Githubcrud
         $url = "https://api.github.com/repos/{$this->gitConfig['username']}/{$this->gitConfig['repository']}/contents/$fileName";
 
         // Get file info to retrieve the SHA
-        $fileInfo = $this->makeCurlRequest($url, 'GET');
+        $fileInfo = $this->makeCurlRequest(url: $url, method: 'GET');
         $fileSha = $fileInfo['sha'];
 
         $data = [
@@ -95,7 +95,7 @@ class Githubcrud
             'branch' => $this->gitConfig['branch'],
         ];
 
-        $this->makeCurlRequest($url, 'DELETE', $data);
+        $this->makeCurlRequest(url: $url, method: 'DELETE', data: $data);
         return true;
     }
 }
