@@ -1,6 +1,6 @@
 <?php
 
-namespace Afrzlfa\Githubcrud;
+namespace IcwrTeam\Githubcrud;
 
 class Githubcrud
 {

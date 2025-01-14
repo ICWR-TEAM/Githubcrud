@@ -2,7 +2,7 @@
 
 require 'vendor/autoload.php';
 
-use Afrzlfa\Githubcrud;
+use IcwrTeam\Githubcrud;
 
 $config = [
     'token' => 'YOUR_GITHUB_TOKEN',
@@ -11,7 +11,7 @@ $config = [
     'branch' => 'main'
 ];
 
-$github = new Afrzlfa\Githubcrud\Githubcrud($config);
+$github = new IcwrTeam\Githubcrud\Githubcrud($config);
 
 // Create a file
 $github->createFile('example.txt', 'Hello, World!');
